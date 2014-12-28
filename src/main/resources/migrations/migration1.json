@@ -1,0 +1,122 @@
+{
+    topic_types: [ # repository types
+        {
+            value: "Repository Name",
+            uri: "dmx.repository.name",
+            data_type_uri: "dm4.core.text",
+            index_mode_uris: [ "dm4.core.key", "dm4.core.fulltext" ]
+        },
+        {
+            value: "Repository Description",
+            uri: "dmx.repository.description",
+            data_type_uri: "dm4.core.text",
+            index_mode_uris: [ "dm4.core.fulltext" ]
+        },
+        {
+            value: "Repository Branch",
+            uri: "dmx.repository.branch",
+            data_type_uri: "dm4.core.text",
+            view_config_topics: [
+                {
+                    type_uri: "dm4.webclient.view_config",
+                    childs: {
+                        dm4.webclient.locked: true
+                    }
+                }
+            ]
+        },
+        {
+            value: "Repository Head",
+            uri: "dmx.repository.head",
+            data_type_uri: "dm4.core.text",
+            view_config_topics: [
+                {
+                    type_uri: "dm4.webclient.view_config",
+                    childs: {
+                        dm4.webclient.locked: true
+                    }
+                }
+            ]
+        },
+        {
+            value: "Repository Status",
+            uri: "dmx.repository.status",
+            data_type_uri: "dm4.core.text",
+            view_config_topics: [
+                {
+                    type_uri: "dm4.webclient.view_config",
+                    childs: {
+                        dm4.webclient.locked: true
+                    }
+                }
+            ]
+        },
+        {
+            value: "Repository URI",
+            uri: "dmx.repository.uri",
+            data_type_uri: "dm4.core.text",
+            index_mode_uris: [ "dm4.core.fulltext" ]
+        },
+        {
+            value: "Repository",
+            uri: "dmx.repository",
+            data_type_uri: "dm4.core.composite",
+            label_config: [ "dmx.repository.name" ],
+            assoc_defs: [
+                {
+                    child_type_uri:         "dmx.repository.name",
+                    assoc_type_uri:         "dm4.core.composition_def",
+                    child_cardinality_uri:  "dm4.core.one"
+                },
+                {
+                    child_type_uri:         "dmx.repository.description",
+                    assoc_type_uri:         "dm4.core.composition_def",
+                    child_cardinality_uri:  "dm4.core.one"
+                },
+                {
+                    child_type_uri:         "dmx.repository.uri",
+                    assoc_type_uri:         "dm4.core.composition_def",
+                    child_cardinality_uri:  "dm4.core.one"
+                },
+                {
+                    child_type_uri:         "dmx.repository.branch",
+                    assoc_type_uri:         "dm4.core.composition_def",
+                    child_cardinality_uri:  "dm4.core.one"
+                },
+                {
+                    child_type_uri:         "dmx.repository.head",
+                    assoc_type_uri:         "dm4.core.composition_def",
+                    child_cardinality_uri:  "dm4.core.one"
+                },
+                {
+                    child_type_uri:         "dmx.repository.status",
+                    assoc_type_uri:         "dm4.core.aggregation_def",
+                    child_cardinality_uri:  "dm4.core.one",
+                    parent_cardinality_uri: "dm4.core.one"
+                }
+            ],
+            view_config_topics: [
+                {
+                    type_uri: "dm4.webclient.view_config",
+                    childs: {
+                        dm4.webclient.icon: "/org.digitalmemex.bootstrap/images/repository.png",
+                        dm4.webclient.show_in_create_menu: true,
+                        dm4.webclient.searchable_as_unit: true
+                    }
+                }
+            ]
+        }
+    ],
+    topics: [ # repository states
+        {
+            value: "Installed",
+            uri: "dmx.repository.status.installed",
+            type_uri: "dmx.repository.status"
+        },
+        {
+            value: "Configured",
+            uri: "dmx.repository.status.configured",
+            type_uri: "dmx.repository.status"
+        }
+    ]
+}

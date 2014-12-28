@@ -1,0 +1,32 @@
+# default repositories
+{
+    topics: [
+        {
+            type_uri: "dmx.repository",
+            childs: {
+                dmx.repository.name: "repository-manager",
+                dmx.repository.description: "Digital MemeX Repository Manger",
+                dmx.repository.uri: "https://github.com/digitalmemex/repository-manager",
+                dmx.repository.status: "ref_uri:dmx.repository.status.installed"
+            }
+        },
+        {
+            type_uri: "dmx.repository",
+            childs: {
+                dmx.repository.name: "type-editor",
+                dmx.repository.description: "Digital MemeX Type Editor",
+                dmx.repository.uri: "https://github.com/digitalmemex/type-editor",
+                dmx.repository.status: "ref_uri:dmx.repository.status.configured"
+            }
+        },
+        {
+            type_uri: "dmx.repository",
+            childs: {
+                dmx.repository.name: "contact-editor",
+                dmx.repository.description: "Digital MemeX Contact Editor",
+                dmx.repository.uri: "https://github.com/digitalmemex/contact-editor",
+                dmx.repository.status: "ref_uri:dmx.repository.status.configured"
+            }
+        }
+    ]
+}
