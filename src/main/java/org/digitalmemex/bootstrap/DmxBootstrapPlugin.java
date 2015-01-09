@@ -17,7 +17,6 @@ import javax.ws.rs.core.Response;
 import java.io.*;
 import java.util.logging.Logger;
 
-@Path("/dmx")
 @Produces("application/json")
 public class DmxBootstrapPlugin extends PluginActivator {
 
@@ -26,7 +25,7 @@ public class DmxBootstrapPlugin extends PluginActivator {
     private FilesService filesService;
 
     @GET
-    @Path("/repository/{name}")
+    @Path("/dmx/repository/{name}")
     public DmxRepository getRepository(@PathParam("name") String name) {
         logger.info("repository request " + name + " topic");
 
@@ -47,7 +46,7 @@ public class DmxBootstrapPlugin extends PluginActivator {
     }
 
     @GET
-    @Path("/application/{name}")
+    @Path("/app/{name}")
     @Produces("text/html")
     public InputStream getApplicationIndex(@PathParam("name") String name) {
         logger.info("request application " + name + " index");
@@ -67,7 +66,8 @@ public class DmxBootstrapPlugin extends PluginActivator {
             throw new WebApplicationException(response);
         }
     }
-
+    
+    @Path("/dmx")
     @GET
     @Produces("text/html")
     public InputStream index() {
@@ -89,7 +89,7 @@ public class DmxBootstrapPlugin extends PluginActivator {
     }
 
     @GET
-    @Path("/repository/{name}/pull")
+    @Path("/dmx/repository/{name}/pull")
     @Transactional
     public DmxRepository getRepositoryPull(@PathParam("name") String name) throws IOException, GitAPIException {
         logger.info("pull request " + name);
@@ -103,7 +103,7 @@ public class DmxBootstrapPlugin extends PluginActivator {
     }
 
     @GET
-    @Path("/repository/{name}/clone")
+    @Path("/dmx/repository/{name}/clone")
     @Transactional
     public DmxRepository cloneRepository(@PathParam("name") String name) throws GitAPIException, IOException {
         logger.info("clone request " + name);
