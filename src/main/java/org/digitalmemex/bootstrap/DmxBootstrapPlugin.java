@@ -7,16 +7,20 @@ import de.deepamehta.core.service.Inject;
 import de.deepamehta.core.service.Transactional;
 import de.deepamehta.plugins.files.service.FilesService;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Path("/")
 @Produces("application/json")
 public class DmxBootstrapPlugin extends PluginActivator {
 
@@ -66,12 +70,12 @@ public class DmxBootstrapPlugin extends PluginActivator {
             throw new WebApplicationException(response);
         }
     }
-    
-    @Path("/dmx")
+
     @GET
+    @Path("/dmx")
     @Produces("text/html")
     public InputStream index() {
-        // TODO use plugin configuration
+        // TODO use plugin configuration instead
         return getApplicationIndex("repository-manager");
     }
 
@@ -82,41 +86,66 @@ public class DmxBootstrapPlugin extends PluginActivator {
 
         if (repo.isInstalled()) { // return .git path
             return filesService.getFile("/dmx/" + repo.getName() + "/.git");
-        } else { // repo.isConfigured()? create and return clone root
-            filesService.createFolder("dmx/" + repo.getName(), "/");
-            return filesService.getFile("/dmx/" + repo.getName());
+        } else { // repo.isConfigured()?
+            File root = filesService.getFile("/dmx");
+            File file = new File(root, repo.getName());
+            if (file.exists() == false) { // create it
+                filesService.createFolder("dmx/" + repo.getName(), "/");
+                return file;
+            }
+            return file;
         }
     }
 
     @GET
     @Path("/dmx/repository/{name}/pull")
     @Transactional
-    public DmxRepository getRepositoryPull(@PathParam("name") String name) throws IOException, GitAPIException {
+    public DmxRepository pullRepository(@PathParam("name") String name) throws IOException {
         logger.info("pull request " + name);
         DmxRepository repo = getRepository(name);
         Repository gitRepo = new FileRepositoryBuilder().readEnvironment().findGitDir()
                 .setGitDir(getRepositoryDirectory(repo)).build();
-        PullResult result = new Git(gitRepo).pull().call();
-        repo.setBranch(gitRepo.getFullBranch());
-        repo.setHead(gitRepo.resolve("HEAD").getName());
-        return repo;
+        try {
+            // TODO set remote and branch references
+            PullCommand pull = new Git(gitRepo).pull();
+            PullResult result = pull.call();
+            logger.info("pull result " + result);
+            repo.setBranch(gitRepo.getFullBranch());
+            repo.setHead(gitRepo.resolve("HEAD").getName());
+            return repo;
+        } catch (GitAPIException e) {
+            logger.log(Level.WARNING, "pull request for " + name + " has failed", e);
+            String message = "pull request for repository " + name + " has failed: " + e.getMessage();
+            throw new WebApplicationException(Response.status(500).entity(message).build());
+        }
     }
 
     @GET
     @Path("/dmx/repository/{name}/clone")
     @Transactional
-    public DmxRepository cloneRepository(@PathParam("name") String name) throws GitAPIException, IOException {
+    public DmxRepository cloneRepository(@PathParam("name") String name) throws IOException {
         logger.info("clone request " + name);
         DmxRepository repo = getRepository(name);
         File path = getRepositoryDirectory(repo);
-        Git git = Git.cloneRepository().setURI(repo.getUri()).setDirectory(path)
-                .setBranch("master").setRemote("origin")
-                .setBare(false).setNoCheckout(false).call();
-        Repository gitRepo = git.getRepository();
-        repo.setBranch(gitRepo.getBranch());
-        repo.setHead(gitRepo.resolve("HEAD").getName());
-        repo.setStatusInstalled();
-        return repo;
+        try {
+            // TODO use remote and branch configuration
+            Git git = Git.cloneRepository().setURI(repo.getUri()).setDirectory(path)
+                    .setBranch("master").setRemote("origin")
+                    .setBare(false).setNoCheckout(false).call();
+            Repository gitRepo = git.getRepository();
+            repo.setBranch(gitRepo.getBranch());
+            repo.setHead(gitRepo.resolve("HEAD").getName());
+            repo.setStatusInstalled();
+            return repo;
+        } catch (GitAPIException e) {
+            logger.log(Level.WARNING, "the cloning of " + name + " has failed", e);
+            String message = "repository " + name + " not installed: " + e.getMessage();
+            throw new WebApplicationException(Response.status(500).entity(message).build());
+        } catch (JGitInternalException e) {
+            logger.log(Level.WARNING, "the cloning of " + name + " has failed", e);
+            String message = "repository " + name + " not installed: " + e.getMessage();
+            throw new WebApplicationException(Response.status(500).entity(message).build());
+        }
     }
 
 }
