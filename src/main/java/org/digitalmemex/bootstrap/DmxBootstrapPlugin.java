@@ -24,9 +24,10 @@ import java.util.logging.Logger;
 @Produces("application/json")
 public class DmxBootstrapPlugin extends PluginActivator {
 
-    private Logger logger = Logger.getLogger(getClass().getName());
     @Inject
-    private FilesService filesService;
+    protected FilesService filesService;
+
+    protected Logger logger = Logger.getLogger(getClass().getName());
 
     @GET
     @Path("/dmx/repository/{name}")
@@ -69,6 +70,12 @@ public class DmxBootstrapPlugin extends PluginActivator {
             Response response = Response.status(404).entity(message).build();
             throw new WebApplicationException(response);
         }
+    }
+
+    @GET
+    @Path("/dmx/version")
+    public String version() {
+        return "0.0.1-17";
     }
 
     @GET
