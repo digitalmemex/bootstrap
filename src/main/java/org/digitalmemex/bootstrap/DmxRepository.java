@@ -10,6 +10,9 @@ public class DmxRepository implements JSONEnabled {
 
     private ChildTopics topics;
 
+    public DmxRepository() {
+    }
+
     public DmxRepository(Topic topic) {
         String typeUri = topic.getTypeUri();
         if (typeUri.equals("dmx.repository")) {

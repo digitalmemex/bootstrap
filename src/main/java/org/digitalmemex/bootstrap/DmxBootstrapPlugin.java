@@ -61,14 +61,20 @@ public class DmxBootstrapPlugin extends PluginActivator {
             throw new RuntimeException("file service plugin is not available");
         }
 
-        String index = "/dmx/" + repo.getName() + "/index.html";
-        File file = filesService.getFile(index);
-        try {
-            return new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            String message = "index file  " + index + " not found";
+        if (repo.isInstalled() == false) {
+            String message = "repository " + name + " not installed";
             Response response = Response.status(404).entity(message).build();
             throw new WebApplicationException(response);
+        } else {
+            String index = "/dmx/" + repo.getName() + "/index.html";
+            try {
+                File file = filesService.getFile(index);
+                return new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                String message = "index file  " + index + " not found";
+                Response response = Response.status(404).entity(message).build();
+                throw new WebApplicationException(response);
+            }
         }
     }
 
