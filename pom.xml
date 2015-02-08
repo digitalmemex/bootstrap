@@ -14,12 +14,12 @@
         <dependency>
             <groupId>de.deepamehta</groupId>
             <artifactId>deepamehta-core</artifactId>
-            <version>4.4.1</version>
+            <version>4.5</version>
         </dependency>
         <dependency>
             <groupId>de.deepamehta</groupId>
             <artifactId>deepamehta-files</artifactId>
-            <version>4.4.1</version>
+            <version>4.5</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
