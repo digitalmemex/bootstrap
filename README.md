@@ -1,3 +1,5 @@
-# Digital MemeX Bootstrap
+# DMX Bootstrap Service
 
-This is an internal used plugin that bootstraps the Digital MemeX repository management.
+This plugin is part of the digitalmemex distribution and provides a RESTful API for managing DMX _Repositories_.
+
+A frontend which makes use of this service is available at https://github.com/digitalmemex/repository-manager.
